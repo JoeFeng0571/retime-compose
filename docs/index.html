@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Driving World Models Move the Camera, Not the Scene</title>
+<meta name="description" content="Released plan-conditioned driving world models move their camera but barely move the scene. ReTime-Compose delivers the plan as geometry, without training.">
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1d1d1f; --muted: #5f6368; --accent: #3578bd; --card: #f5f6f8; --border: #e2e4e8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #121417; --fg: #e8eaed; --muted: #a0a4ab; --accent: #6fa8e6; --card: #1c1f24; --border: #2c3036; }
+  }
+  :root[data-theme="dark"] { --bg: #121417; --fg: #e8eaed; --muted: #a0a4ab; --accent: #6fa8e6; --card: #1c1f24; --border: #2c3036; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 960px; margin: 0 auto; padding: 48px 16px 64px; }
+  h1 { font-size: 2.2rem; line-height: 1.25; text-align: center; margin: 0 0 16px; }
+  h2 { font-size: 1.45rem; margin: 48px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+  .authors, .affil { text-align: center; color: var(--muted); margin: 4px 0; }
+  .authors { font-size: 1.1rem; color: var(--fg); }
+  .links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 24px 0 8px; }
+  .links a, .links span { display: inline-block; padding: 8px 18px; border-radius: 999px; font-weight: 600; text-decoration: none; }
+  .links a { background: var(--fg); color: var(--bg); }
+  .links span { background: var(--card); color: var(--muted); border: 1px solid var(--border); }
+  figure { margin: 24px 0; }
+  figure img { width: 100%; height: auto; display: block; border-radius: 8px; background: #fff; }
+  figcaption { color: var(--muted); font-size: 0.93rem; margin-top: 8px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } h1 { font-size: 1.6rem; } }
+  .tldr { background: var(--card); border-left: 4px solid var(--accent); padding: 14px 18px; border-radius: 6px; }
+  pre { background: var(--card); border: 1px solid var(--border); padding: 14px; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
+  a { color: var(--accent); }
+  footer { margin-top: 56px; color: var(--muted); font-size: 0.85rem; text-align: center; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Driving World Models Move the Camera, Not the Scene</h1>
+  <p class="authors">Author One<sup>1</sup> &nbsp; Author Two<sup>1</sup></p>
+  <p class="affil"><sup>1</sup>Affiliation</p>
+
+  <div class="links">
+    <span title="Link will be added when the preprint is public">Paper (arXiv, coming soon)</span>
+    <span title="Code will be released here">Code (coming soon)</span>
+  </div>
+
+  <figure>
+    <img src="static/images/p_fig1_teaser.png" alt="Teaser: released world models move the camera but not the scene; ReTime-Compose follows the real outcome.">
+    <figcaption><b>Released driving world models move the camera, not the scene, and the trajectory score cannot tell.</b>
+      A: the stereo right camera records the real outcome of a plan 0.54&nbsp;m to the right; released Epona moves the scene the wrong way, while ReTime-Compose on the same frozen Epona follows.
+      B: at half speed the real scene recedes; released Orbis&nbsp;2's barely changes, ReTime-Compose's recedes.
+      C: scale-aligned ADE favours a video that ignores a half-speed command; the scene response &alpha; does not.</figcaption>
+  </figure>
+
+  <p class="tldr"><b>TL;DR.</b> Recorded drives already contain the real outcomes of plans that were never driven. Measured against them, released plan-conditioned world models move their camera but barely move the scene. ReTime-Compose delivers the plan to a frozen generator as geometry, without training.</p>
+
+  <h2>Abstract</h2>
+  <p>Plan-conditioned driving world models are used to compare candidate plans, so their forecast should change with the plan as the real scene would, yet widely used control metrics check only whether the camera follows the command. Recorded drives already contain real outcomes of plans that were never driven: retiming a log gives pose-matched images and LiDAR for other speeds, and a stereo rig records a laterally shifted view. Against these references, released world models move their camera but barely move the scene: their scene response, the share of the real change in distance that the forecast reproduces, reaches at most about a third of real video's, and the trajectory score cannot tell an executed speed command from an ignored one. Interventions inside the generator trace the failure to the plan's channel. The forecast geometry follows the context frames; once they carry the planned geometry, plan tokens add little. ReTime-Compose therefore delivers the plan as geometry, without training. It transports the frames of one logged-speed rollout to the planned cameras, and the frozen model completes only what no frame covers. Frozen generators then follow a 0.54&nbsp;m lateral shift nearly as the real scene does on KITTI, nuScenes and Argoverse&nbsp;2, and respond more than re-sampling to slow-down plans in three generators and to speed-up plans in two.</p>
+
+  <h2>Method: ReTime-Compose</h2>
+  <figure>
+    <img src="static/images/rc_pipeline_pptx.png" alt="ReTime-Compose pipeline: roll out once, re-time by geometry, complete only the unseen.">
+    <figcaption><b>The plan acts through transport, and the frozen generator completes only what transport cannot supply.</b>
+      (a) One frozen rollout at the logged speed. (b) Read depth and poses transport its frames from the rollout cameras to the planned ones. (c) The frozen model completes the pixels no frame covers; covered pixels are pasted back.</figcaption>
+  </figure>
+
+  <h2>Measuring the scene, not only the camera</h2>
+  <div class="grid">
+    <figure>
+      <img src="static/images/p_fig_alpha.png" alt="How the scene response alpha is read from LiDAR points.">
+      <figcaption><b>Scene response &alpha;.</b> The least-squares slope of the forecast change in distance against the real change (half against logged speed, KITTI). A forecast that changes as the world does lies on the dashed line.</figcaption>
+    </figure>
+    <figure>
+      <img src="static/images/p_fig5_frontier.png" alt="Response versus noise trade-off.">
+      <figcaption><b>Completion takes ReTime-Compose off the response&ndash;noise trade-off.</b> Re-sampling lowers the noise, the composite raises the response, and completion brings the noise below re-sampling's.</figcaption>
+    </figure>
+  </div>
+
+  <h2>Qualitative example</h2>
+  <figure>
+    <img src="static/images/p_fig6_qual.png" alt="Slow-down plan: real video, released model, re-sampling and ReTime-Compose.">
+    <figcaption><b>Under a slow-down plan, ReTime-Compose shows static content at the planned pose.</b> Real pose-matched video, the released model, re-sampling and ReTime-Compose at steps 16 and 24 of the 0.5&times; plan. Dashed line: the bottom of the real lead car.</figcaption>
+  </figure>
+
+  <h2>Code</h2>
+  <p>Evaluation code for the scene response and the ReTime-Compose implementation will be released in this repository. Datasets (KITTI, nuScenes, Argoverse&nbsp;2) and released world-model checkpoints must be obtained from their original sources under their own licenses.</p>
+
+  <h2>BibTeX</h2>
+<pre>@article{retimecompose,
+  title   = {Driving World Models Move the Camera, Not the Scene},
+  author  = {Author One and Author Two},
+  journal = {arXiv preprint arXiv:XXXX.XXXXX},
+  year    = {2026}
+}</pre>
+
+  <footer>Images in the figures are from KITTI, nuScenes and Argoverse&nbsp;2, used for research under their respective licenses.</footer>
+</main>
+</body>
+</html>
