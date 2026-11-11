@@ -1,6 +1,6 @@
 # Driving World Models Move the Camera, Not the Scene
 
-**Yuqiao Feng, Xiaoyu Ao** · Chongqing University
+**Yuqiao Feng\*, Xiaoyu Ao\*** · Chongqing University · \*Equal contribution
 
 [Project page](https://joefeng0571.github.io/retime-compose/) · Paper (arXiv, coming soon) · Code (coming soon)
 
