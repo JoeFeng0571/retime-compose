@@ -83,15 +83,14 @@
   <h2 id="videos">Videos</h2>
   <p class="note">All numbers in the paper are computed over every context of each evaluation set. The videos illustrate them; where a context was selected for visibility, the caption says so.</p>
   <div class="tabs" role="tablist">
-    <button role="tab" aria-selected="true" data-v="lateral">Lateral shift · Epona</button>
-    <button role="tab" aria-selected="false" data-v="speedup_epona">1.5× · Epona</button>
+    <button role="tab" aria-selected="true" data-v="speedup_orbis2">1.5× · Orbis 2</button>
     <button role="tab" aria-selected="false" data-v="slowdown_orbis2">0.5× · Orbis 2</button>
-    <button role="tab" aria-selected="false" data-v="speedup_orbis2">1.5× · Orbis 2</button>
+    <button role="tab" aria-selected="false" data-v="speedup_dw">1.5× · DrivingWorld</button>
+    <button role="tab" aria-selected="false" data-v="lateral">Lateral shift · Epona</button>
     <button role="tab" aria-selected="false" data-v="depth_slowdown">Depth view · 0.5×</button>
-    <button role="tab" aria-selected="false" data-v="depth_speedup">Depth view · 1.5×</button>
   </div>
   <figure>
-    <video id="vid" controls loop muted playsinline preload="metadata" src="static/videos/lateral_epona.mp4"></video>
+    <video id="vid" controls loop muted playsinline preload="metadata" src="static/videos/speedup_orbis2.mp4"></video>
     <figcaption id="vcap"></figcaption>
   </figure>
 
@@ -165,12 +164,11 @@
 </main>
 <script>
   const V = {
-    lateral: ["static/videos/lateral_epona.mp4", "<b>Lateral plan: the logged path shifted right by the stereo baseline (0.53–0.54&nbsp;m).</b> Columns: real stereo pair (true outcome), released Epona, ReTime-Compose on the same frozen Epona. Each example plays the logged plan, then the shifted plan, then toggles between them. Six contexts: the first six of the lateral evaluation set in sorted order, <b>not selected by outcome</b>. Yellow dashed lines are fixed on screen."],
-    speedup_epona: ["static/videos/speedup_epona.mp4", "<b>Speed-up plan (1.5×), Epona.</b> Rows: real video at the logged speed and retimed to 1.5× (true outcome); released Epona under both plans; ReTime-Compose under both plans. One context, <b>selected</b> because a static landmark (a kiosk) makes the change visible; the boxes at the last step are drawn by eye on that landmark."],
-    slowdown_orbis2: ["static/videos/slowdown_orbis2.mp4", "<b>Slow-down plan (0.5×), Orbis&nbsp;2.</b> Same layout as the Epona video. One context, <b>selected</b> as a clear failure of the released model (large real change, small model change)."],
-    speedup_orbis2: ["static/videos/speedup_orbis2.mp4", "<b>Speed-up plan (1.5×), Orbis&nbsp;2.</b> Same layout. One context, <b>selected</b> as a clear failure of the released model (large real change, small model change)."],
-    depth_slowdown: ["static/videos/depth_slowdown_orbis2.mp4", "<b>Released Orbis&nbsp;2 read the way the scene response is computed, 0.5×.</b> Camera image, depth from the frozen depth reader, and the near-field depth change between the plan and the logged speed, for real video (top) and the forecast (bottom). Context <b>selected</b> as a clear failure."],
-    depth_speedup: ["static/videos/depth_speedup_orbis2.mp4", "<b>Released Orbis&nbsp;2 read the way the scene response is computed, 1.5×.</b> Same layout as the 0.5× depth video. Context <b>selected</b> as a clear failure."]
+    speedup_orbis2: ["static/videos/speedup_orbis2.mp4", "<b>Speed-up plan (1.5×), Orbis&nbsp;2: at 1.5× the car is already past the intersection; the forecast is still at it.</b> Rows: real video at the logged speed and retimed to 1.5× (true outcome), released Orbis&nbsp;2, ReTime-Compose on the same frozen model. The video plays both plans side by side, then flips each row between 1× and 1.5× at step 24: the real view jumps, the released forecast barely moves. One context, <b>selected</b> as a clear failure (large real change, small model change); boxes are drawn by eye on the intersection."],
+    slowdown_orbis2: ["static/videos/slowdown_orbis2.mp4", "<b>Slow-down plan (0.5×), Orbis&nbsp;2: at half speed the intersection is still far ahead; the forecast is nearly as close as at 1×.</b> Same layout and context as the 1.5× video, <b>selected</b>."],
+    speedup_dw: ["static/videos/speedup_drivingworld.mp4", "<b>Speed-up plan (1.5×), DrivingWorld: at 1.5× the car is through the roundabout, facing a house; the forecast is still in front of the roundabout.</b> Rows: real video and released DrivingWorld (forecast seed as in the audit). One context, <b>selected</b> from the audit set as a clear failure (large real change in near-field depth, small model change); boxes are drawn by eye."],
+    lateral: ["static/videos/lateral_epona.mp4", "<b>Lateral plan: the logged path shifted 0.53&nbsp;m to the right (the stereo baseline).</b> Columns: real stereo pair (true outcome), released Epona, ReTime-Compose on the same frozen Epona; below each, a 2× zoom on the near parked cars. Each column flips between the two plans: against the fixed yellow lines the real cars jump left, Epona's do not move, ReTime-Compose's jump like the real ones. One context, <b>selected</b> for its near parked cars from the first six contexts of the lateral evaluation set."],
+    depth_slowdown: ["static/videos/depth_slowdown_orbis2.mp4", "<b>How the scene response is read (0.5×, Orbis&nbsp;2).</b> Camera image, depth from the frozen depth reader, and the near-field depth change between the plan and the logged speed: strong colour for real video (top), almost none for the forecast (bottom). Context <b>selected</b> as a clear failure."]
   };
   const vid = document.getElementById("vid"), cap = document.getElementById("vcap");
   function show(k) {
@@ -178,7 +176,7 @@
     document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.v === k ? "true" : "false"));
   }
   document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => { show(b.dataset.v); vid.play().catch(() => {}); }));
-  show("lateral");
+  show("speedup_orbis2");
 </script>
 </body>
 </html>
