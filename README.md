@@ -1,6 +1,6 @@
 # Driving World Models Move the Camera, Not the Scene
 
-**Author One, Author Two** · Affiliation
+**Yuqiao Feng, Xiaoyu Ao** · Chongqing University
 
 [Project page](https://joefeng0571.github.io/retime-compose/) · Paper (arXiv, coming soon) · Code (coming soon)
 
@@ -24,7 +24,7 @@ Datasets (KITTI, nuScenes, Argoverse 2) and released world-model checkpoints mus
 ```bibtex
 @article{retimecompose,
   title   = {Driving World Models Move the Camera, Not the Scene},
-  author  = {Author One and Author Two},
+  author  = {Feng, Yuqiao and Ao, Xiaoyu},
   journal = {arXiv preprint arXiv:XXXX.XXXXX},
   year    = {2026}
 }
