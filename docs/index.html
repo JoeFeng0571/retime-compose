@@ -7,17 +7,18 @@
 <meta name="description" content="Released plan-conditioned driving world models move their camera but barely move the scene. ReTime-Compose delivers the plan as geometry, without training.">
 <style>
   :root {
-    --bg: #ffffff; --fg: #1d1d1f; --muted: #5f6368; --accent: #3578bd; --card: #f5f6f8; --border: #e2e4e8;
+    --bg: #ffffff; --fg: #1d1d1f; --muted: #5f6368; --accent: #3578bd; --card: #f5f6f8; --border: #e2e4e8; --good: #1e7d3c; --bad: #b3261e;
   }
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) { --bg: #121417; --fg: #e8eaed; --muted: #a0a4ab; --accent: #6fa8e6; --card: #1c1f24; --border: #2c3036; }
+    :root:not([data-theme="light"]) { --bg: #121417; --fg: #e8eaed; --muted: #a0a4ab; --accent: #6fa8e6; --card: #1c1f24; --border: #2c3036; --good: #5cc98a; --bad: #f28b82; }
   }
-  :root[data-theme="dark"] { --bg: #121417; --fg: #e8eaed; --muted: #a0a4ab; --accent: #6fa8e6; --card: #1c1f24; --border: #2c3036; }
+  :root[data-theme="dark"] { --bg: #121417; --fg: #e8eaed; --muted: #a0a4ab; --accent: #6fa8e6; --card: #1c1f24; --border: #2c3036; --good: #5cc98a; --bad: #f28b82; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-  main { max-width: 960px; margin: 0 auto; padding: 48px 16px 64px; }
+  main { max-width: 980px; margin: 0 auto; padding: 48px 16px 64px; }
   h1 { font-size: 2.2rem; line-height: 1.25; text-align: center; margin: 0 0 16px; }
-  h2 { font-size: 1.45rem; margin: 48px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+  h2 { font-size: 1.45rem; margin: 52px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+  h3 { font-size: 1.08rem; margin: 0 0 6px; }
   .authors, .affil { text-align: center; color: var(--muted); margin: 4px 0; }
   .authors { font-size: 1.1rem; color: var(--fg); }
   .links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 24px 0 8px; }
@@ -25,11 +26,26 @@
   .links a { background: var(--fg); color: var(--bg); }
   .links span { background: var(--card); color: var(--muted); border: 1px solid var(--border); }
   figure { margin: 24px 0; }
-  figure img { width: 100%; height: auto; display: block; border-radius: 8px; background: #fff; }
+  figure img, figure video { width: 100%; height: auto; display: block; border-radius: 8px; background: #000; }
+  figure img { background: #fff; }
   figcaption { color: var(--muted); font-size: 0.93rem; margin-top: 8px; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } h1 { font-size: 1.6rem; } }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; font-size: 0.95rem; }
+  .card .num { color: var(--accent); font-weight: 700; font-size: 0.85rem; letter-spacing: .04em; text-transform: uppercase; }
+  @media (max-width: 760px) { .grid, .cards { grid-template-columns: 1fr; } h1 { font-size: 1.6rem; } }
   .tldr { background: var(--card); border-left: 4px solid var(--accent); padding: 14px 18px; border-radius: 6px; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; }
+  .tabs button { font: inherit; font-size: 0.92rem; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); color: var(--fg); cursor: pointer; }
+  .tabs button[aria-selected="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+  .tablewrap { overflow-x: auto; margin: 12px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+  th, td { padding: 6px 10px; border-bottom: 1px solid var(--border); text-align: center; white-space: nowrap; }
+  th:first-child, td:first-child { text-align: left; }
+  thead th { border-bottom: 2px solid var(--fg); }
+  tr.ref td { color: var(--muted); }
+  td.good { color: var(--good); font-weight: 600; }
+  .note { color: var(--muted); font-size: 0.88rem; }
   pre { background: var(--card); border: 1px solid var(--border); padding: 14px; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
   a { color: var(--accent); }
   footer { margin-top: 56px; color: var(--muted); font-size: 0.85rem; text-align: center; }
@@ -44,21 +60,67 @@
 
   <div class="links">
     <span title="Link will be added when the preprint is public">Paper (arXiv, coming soon)</span>
+    <a href="#videos">Videos</a>
     <span title="Code will be released here">Code (coming soon)</span>
   </div>
 
   <figure>
     <img src="static/images/p_fig1_teaser.png" alt="Teaser: released world models move the camera but not the scene; ReTime-Compose follows the real outcome.">
     <figcaption><b>Released driving world models move the camera, not the scene, and the trajectory score cannot tell.</b>
-      A: the stereo right camera records the real outcome of a plan 0.54&nbsp;m to the right; released Epona moves the scene the wrong way, while ReTime-Compose on the same frozen Epona follows.
+      A: the stereo right camera records the real outcome of a plan 0.54&nbsp;m to the right; released Epona moves the scene content the wrong way, while ReTime-Compose on the same frozen Epona follows.
       B: at half speed the real scene recedes; released Orbis&nbsp;2's barely changes, ReTime-Compose's recedes.
       C: scale-aligned ADE favours a video that ignores a half-speed command; the scene response &alpha; does not.</figcaption>
   </figure>
 
   <p class="tldr"><b>TL;DR.</b> Recorded drives already contain the real outcomes of plans that were never driven. Measured against them, released plan-conditioned world models move their camera but barely move the scene. ReTime-Compose delivers the plan to a frozen generator as geometry, without training.</p>
 
-  <h2>Abstract</h2>
-  <p>Plan-conditioned driving world models are used to compare candidate plans, so their forecast should change with the plan as the real scene would, yet widely used control metrics check only whether the camera follows the command. Recorded drives already contain real outcomes of plans that were never driven: retiming a log gives pose-matched images and LiDAR for other speeds, and a stereo rig records a laterally shifted view. Against these references, released world models move their camera but barely move the scene: their scene response, the share of the real change in distance that the forecast reproduces, reaches at most about a third of real video's, and the trajectory score cannot tell an executed speed command from an ignored one. Interventions inside the generator trace the failure to the plan's channel. The forecast geometry follows the context frames; once they carry the planned geometry, plan tokens add little. ReTime-Compose therefore delivers the plan as geometry, without training. It transports the frames of one logged-speed rollout to the planned cameras, and the frozen model completes only what no frame covers. Frozen generators then follow a 0.54&nbsp;m lateral shift nearly as the real scene does on KITTI, nuScenes and Argoverse&nbsp;2, and respond more than re-sampling to slow-down plans in three generators and to speed-up plans in two.</p>
+  <div class="cards">
+    <div class="card"><div class="num">1 · What metrics miss</div><h3>The camera follows, the scene does not</h3>Released models reproduce at most about a third of the real change in distance under speed plans, and scale-aligned ADE cannot tell an executed speed command from an ignored one.</div>
+    <div class="card"><div class="num">2 · Where the truth comes from</div><h3>Real counterfactual references</h3>Retiming a recorded drive gives pose-matched images and LiDAR for other speeds; a stereo rig records the view of a camera shifted 0.54&nbsp;m to the side.</div>
+    <div class="card"><div class="num">3 · What ReTime-Compose fixes</div><h3>The plan enters as geometry</h3>Transport one logged-speed rollout to the planned cameras and let the frozen generator complete only the unseen pixels. No training.</div>
+  </div>
+
+  <h2 id="videos">Videos</h2>
+  <p class="note">All numbers in the paper are computed over every context of each evaluation set. The videos illustrate them; where a context was selected for visibility, the caption says so.</p>
+  <div class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-v="lateral">Lateral shift · Epona</button>
+    <button role="tab" aria-selected="false" data-v="speedup_epona">1.5× · Epona</button>
+    <button role="tab" aria-selected="false" data-v="slowdown_orbis2">0.5× · Orbis 2</button>
+    <button role="tab" aria-selected="false" data-v="speedup_orbis2">1.5× · Orbis 2</button>
+    <button role="tab" aria-selected="false" data-v="depth_slowdown">Depth view · 0.5×</button>
+    <button role="tab" aria-selected="false" data-v="depth_speedup">Depth view · 1.5×</button>
+  </div>
+  <figure>
+    <video id="vid" controls loop muted playsinline preload="metadata" src="static/videos/lateral_epona.mp4"></video>
+    <figcaption id="vcap"></figcaption>
+  </figure>
+
+  <h2>Key results</h2>
+  <p><b>Released models move the camera but not the scene.</b> Scene response &alpha;: the share of the real change in distance that the forecast reproduces (1 = changes as the world does, 0 = ignores the plan). Lateral: slope of predicted image motion on real stereo disparity for a 0.54&nbsp;m right shift. KITTI, 59–256 contexts per model.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Released model</th><th>&alpha; at 0.5×</th><th>&alpha; at 1.5×</th><th>lateral slope</th></tr></thead>
+    <tbody>
+      <tr><td>DrivingWorld</td><td>.17</td><td>.08</td><td>−.30 / −.15</td></tr>
+      <tr><td>Vista</td><td>−.03</td><td>−.05</td><td>.03 / .02</td></tr>
+      <tr><td>Epona</td><td>.18</td><td>.16</td><td>−.03 / −.02</td></tr>
+      <tr><td>Orbis 2</td><td>.23</td><td>.11</td><td>.23</td></tr>
+      <tr><td>GEM</td><td>.20</td><td>.10</td><td>−.02</td></tr>
+      <tr class="ref"><td>real video</td><td>.64–.73</td><td>.66–.71</td><td>.99</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Real video reads about .72 rather than 1 under speed plans because the depth reader compresses depth; it is the attainable reference. Lateral pairs are two seeds where available.</p>
+
+  <p style="margin-top:28px"><b>ReTime-Compose on the same frozen generators.</b> Lateral: slope against real stereo disparity (KITTI) or LiDAR parallax (nuScenes, Argoverse&nbsp;2), real = 1.00. Speed: gain in &alpha; over re-sampling, the training-free baseline that replays the logged-speed rollout at the planned speed.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Generator</th><th>lateral 0.54 m</th><th>speed gain at 0.5×</th><th>speed gain at 1.5×</th></tr></thead>
+    <tbody>
+      <tr><td>Epona (7 KITTI sets)</td><td class="good">.93–1.04</td><td class="good">+.17 (+.14 on test set 5)</td><td class="good">+.16 (+.11 on test set 5)</td></tr>
+      <tr><td>Epona (nuScenes, Argoverse 2)</td><td class="good">.94–.96</td><td>–</td><td>–</td></tr>
+      <tr><td>GEM</td><td class="good">.96 / 1.01</td><td class="good">+.24</td><td>–</td></tr>
+      <tr><td>Orbis 2</td><td class="good">.90</td><td class="good">+.16</td><td>–</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note">Epona speed gains are pooled over the validation set and test sets 1–4; test set 5 (80 contexts from 25 further drives) was read once after the method was frozen. GEM's rollout only covers slow-down plans. Full tables, intervals and controls are in the paper.</p>
 
   <h2>Method: ReTime-Compose</h2>
   <figure>
@@ -75,7 +137,7 @@
     </figure>
     <figure>
       <img src="static/images/p_fig5_frontier.png" alt="Response versus noise trade-off.">
-      <figcaption><b>Completion takes ReTime-Compose off the response&ndash;noise trade-off.</b> Re-sampling lowers the noise, the composite raises the response, and completion brings the noise below re-sampling's.</figcaption>
+      <figcaption><b>Completion takes ReTime-Compose off the response&ndash;noise trade-off.</b> Re-sampling lowers the noise, the composite raises the response, and completion brings the noise below re-sampling's (validation set).</figcaption>
     </figure>
   </div>
 
@@ -84,6 +146,9 @@
     <img src="static/images/p_fig6_qual.png" alt="Slow-down plan: real video, released model, re-sampling and ReTime-Compose.">
     <figcaption><b>Under a slow-down plan, ReTime-Compose shows static content at the planned pose.</b> Real pose-matched video, the released model, re-sampling and ReTime-Compose at steps 16 and 24 of the 0.5&times; plan. Dashed line: the bottom of the real lead car.</figcaption>
   </figure>
+
+  <h2>Abstract</h2>
+  <p>Plan-conditioned driving world models are used to compare candidate plans, so their forecast should change with the plan as the real scene would, yet widely used control metrics check only whether the camera follows the command. Recorded drives already contain real outcomes of plans that were never driven: retiming a log gives pose-matched images and LiDAR for other speeds, and a stereo rig records a laterally shifted view. Against these references, released world models move their camera but barely move the scene: their scene response, the share of the real change in distance that the forecast reproduces, reaches at most about a third of real video's, and the trajectory score cannot tell an executed speed command from an ignored one. Interventions inside the generator trace the failure to the plan's channel. The forecast geometry follows the context frames; once they carry the planned geometry, plan tokens add little. ReTime-Compose therefore delivers the plan as geometry, without training. It transports the frames of one logged-speed rollout to the planned cameras, and the frozen model completes only what no frame covers. Frozen generators then follow a 0.54&nbsp;m lateral shift nearly as the real scene does on KITTI, nuScenes and Argoverse&nbsp;2, and respond more than re-sampling to slow-down plans in three generators and to speed-up plans in two.</p>
 
   <h2>Code</h2>
   <p>Evaluation code for the scene response and the ReTime-Compose implementation will be released in this repository. Datasets (KITTI, nuScenes, Argoverse&nbsp;2) and released world-model checkpoints must be obtained from their original sources under their own licenses.</p>
@@ -96,7 +161,24 @@
   year    = {2026}
 }</pre>
 
-  <footer>Images in the figures are from KITTI, nuScenes and Argoverse&nbsp;2, used for research under their respective licenses.</footer>
+  <footer>Images and videos are from KITTI, nuScenes and Argoverse&nbsp;2, used for research under their respective licenses.</footer>
 </main>
+<script>
+  const V = {
+    lateral: ["static/videos/lateral_epona.mp4", "<b>Lateral plan: the logged path shifted right by the stereo baseline (0.53–0.54&nbsp;m).</b> Columns: real stereo pair (true outcome), released Epona, ReTime-Compose on the same frozen Epona. Each example plays the logged plan, then the shifted plan, then toggles between them. Six contexts: the first six of the lateral evaluation set in sorted order, <b>not selected by outcome</b>. Yellow dashed lines are fixed on screen."],
+    speedup_epona: ["static/videos/speedup_epona.mp4", "<b>Speed-up plan (1.5×), Epona.</b> Rows: real video at the logged speed and retimed to 1.5× (true outcome); released Epona under both plans; ReTime-Compose under both plans. One context, <b>selected</b> because a static landmark (a kiosk) makes the change visible; the boxes at the last step are drawn by eye on that landmark."],
+    slowdown_orbis2: ["static/videos/slowdown_orbis2.mp4", "<b>Slow-down plan (0.5×), Orbis&nbsp;2.</b> Same layout as the Epona video. One context, <b>selected</b> as a clear failure of the released model (large real change, small model change)."],
+    speedup_orbis2: ["static/videos/speedup_orbis2.mp4", "<b>Speed-up plan (1.5×), Orbis&nbsp;2.</b> Same layout. One context, <b>selected</b> as a clear failure of the released model (large real change, small model change)."],
+    depth_slowdown: ["static/videos/depth_slowdown_orbis2.mp4", "<b>Released Orbis&nbsp;2 read the way the scene response is computed, 0.5×.</b> Camera image, depth from the frozen depth reader, and the near-field depth change between the plan and the logged speed, for real video (top) and the forecast (bottom). Context <b>selected</b> as a clear failure."],
+    depth_speedup: ["static/videos/depth_speedup_orbis2.mp4", "<b>Released Orbis&nbsp;2 read the way the scene response is computed, 1.5×.</b> Same layout as the 0.5× depth video. Context <b>selected</b> as a clear failure."]
+  };
+  const vid = document.getElementById("vid"), cap = document.getElementById("vcap");
+  function show(k) {
+    vid.src = V[k][0]; cap.innerHTML = V[k][1];
+    document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.v === k ? "true" : "false"));
+  }
+  document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => { show(b.dataset.v); vid.play().catch(() => {}); }));
+  show("lateral");
+</script>
 </body>
 </html>
