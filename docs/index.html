@@ -66,13 +66,13 @@
 
   <figure>
     <img src="static/images/p_fig1_teaser.png" alt="Teaser: released world models move the camera but not the scene; ReTime-Compose follows the real outcome.">
-    <figcaption><b>Released driving world models move the camera, not the scene, and the trajectory score cannot tell.</b>
+    <figcaption><b>Released driving world models move the camera, not the scene, and the trajectory score cannot tell</b> (paper Fig.&nbsp;1).
       A: the stereo right camera records the real outcome of a plan 0.54&nbsp;m to the right; released Epona moves the scene content the wrong way, while ReTime-Compose on the same frozen Epona follows.
       B: at half speed the real scene recedes; released Orbis&nbsp;2's barely changes, ReTime-Compose's recedes.
       C: scale-aligned ADE favours a video that ignores a half-speed command; the scene response &alpha; does not.</figcaption>
   </figure>
 
-  <p class="tldr"><b>TL;DR.</b> Recorded drives already contain the real outcomes of plans that were never driven. Measured against them, released plan-conditioned world models move their camera but barely move the scene. ReTime-Compose delivers the plan to a frozen generator as geometry, without training.</p>
+  <p class="tldr"><b>TL;DR.</b> Recorded drives already contain the real outcomes of plans that were never driven. Measured against them, five released plan-conditioned world models move their camera but barely move the scene: under speed plans they reproduce at most .23 of the real change in distance, where real video reaches .64–.73, and under a 0.54&nbsp;m lateral shift at most .23 of the real image motion, where real video reaches .99 (paper Table&nbsp;2). ReTime-Compose delivers the plan to a frozen generator as geometry, without training: lateral response .90–1.04 (Table&nbsp;4), and a higher speed response than re-sampling on every set (Table&nbsp;5).</p>
 
   <div class="cards">
     <div class="card"><div class="num">1 · What metrics miss</div><h3>The camera follows, the scene does not</h3>Released models reproduce at most about a third of the real change in distance under speed plans, and scale-aligned ADE cannot tell an executed speed command from an ignored one.</div>
@@ -93,7 +93,40 @@
   </figure>
 
   <h2>Key results</h2>
-  <p><b>Released models move the camera but not the scene.</b> Scene response &alpha;: the share of the real change in distance that the forecast reproduces (1 = changes as the world does, 0 = ignores the plan). Lateral: slope of predicted image motion on real stereo disparity for a 0.54&nbsp;m right shift. KITTI, 59–256 contexts per model.</p>
+  <p><b>Released models move the camera but not the scene</b> (paper Table&nbsp;2). Scene response &alpha;: the share of the real change in distance that the forecast reproduces (1 = changes as the world does, 0 = ignores the plan). Lateral: slope of predicted image motion on real stereo disparity for a 0.54&nbsp;m right shift. KITTI, 59–256 contexts per model.</p>
+  <figure>
+    <svg viewBox="0 0 940 330" role="img" aria-label="Bar chart: scene response alpha of five released models at 0.5x and 1.5x, between -0.05 and 0.23, against real video at 0.64 to 0.73" style="width:100%;height:auto;display:block">
+      <style>
+        .ax { stroke: var(--border); stroke-width: 1; } .ax0 { stroke: var(--fg); stroke-width: 1.2; }
+        .t { fill: var(--muted); font: 13px -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+        .tv { fill: var(--fg); font: 600 13px -apple-system, "Segoe UI", Roboto, Arial, sans-serif; text-anchor: middle; }
+        .tg { fill: var(--fg); font: 600 14px -apple-system, "Segoe UI", Roboto, Arial, sans-serif; text-anchor: middle; }
+        .b05 { fill: var(--accent); } .b15 { fill: var(--accent); opacity: .45; } .bre { fill: var(--muted); } .bre15 { fill: var(--muted); opacity: .45; }
+        .wh { stroke: var(--fg); stroke-width: 2; }
+      </style>
+      <line class="ax" x1="66" y1="200" x2="930" y2="200"/><line class="ax" x1="66" y1="140" x2="930" y2="140"/><line class="ax" x1="66" y1="80" x2="930" y2="80"/><line class="ax" x1="66" y1="20" x2="930" y2="20"/>
+      <text class="t" x="58" y="264" text-anchor="end">0</text><text class="t" x="58" y="204" text-anchor="end">.2</text><text class="t" x="58" y="144" text-anchor="end">.4</text><text class="t" x="58" y="84" text-anchor="end">.6</text><text class="t" x="58" y="24" text-anchor="end">.8</text>
+      <text class="t" x="16" y="150" transform="rotate(-90 16 150)" text-anchor="middle">scene response &#945;</text>
+      <rect class="b05" x="90" y="34" width="14" height="14"/><text class="t" x="110" y="46">0.5× plan</text>
+      <rect class="b15" x="190" y="34" width="14" height="14"/><text class="t" x="210" y="46">1.5× plan</text>
+      <text class="t" x="300" y="46">grey: real video (range over evaluation sets)</text>
+      <rect class="b05" x="94" y="209" width="44" height="51"/><text class="tv" x="116" y="203">.17</text>
+      <rect class="b15" x="146" y="236" width="44" height="24"/><text class="tv" x="168" y="230">.08</text>
+      <rect class="b05" x="239" y="260" width="44" height="9"/><text class="tv" x="261" y="284">−.03</text>
+      <rect class="b15" x="291" y="260" width="44" height="15"/><text class="tv" x="313" y="290">−.05</text>
+      <rect class="b05" x="384" y="206" width="44" height="54"/><text class="tv" x="406" y="200">.18</text>
+      <rect class="b15" x="436" y="212" width="44" height="48"/><text class="tv" x="458" y="206">.16</text>
+      <rect class="b05" x="529" y="191" width="44" height="69"/><text class="tv" x="551" y="185">.23</text>
+      <rect class="b15" x="581" y="227" width="44" height="33"/><text class="tv" x="603" y="221">.11</text>
+      <rect class="b05" x="674" y="200" width="44" height="60"/><text class="tv" x="696" y="194">.20</text>
+      <rect class="b15" x="726" y="230" width="44" height="30"/><text class="tv" x="748" y="224">.10</text>
+      <rect class="bre" x="819" y="55" width="44" height="205"/><line class="wh" x1="841" y1="41" x2="841" y2="68"/><text class="tv" x="835" y="34">.64–.73</text>
+      <rect class="bre15" x="871" y="55" width="44" height="205"/><line class="wh" x1="893" y1="47" x2="893" y2="62"/><text class="tv" x="899" y="34">.66–.71</text>
+      <line class="ax0" x1="66" y1="260" x2="930" y2="260"/>
+      <text class="tg" x="142" y="318">DrivingWorld</text><text class="tg" x="287" y="318">Vista</text><text class="tg" x="432" y="318">Epona</text><text class="tg" x="577" y="318">Orbis 2</text><text class="tg" x="722" y="318">GEM</text><text class="tg" x="867" y="318">real video</text>
+    </svg>
+    <figcaption><b>Scene response under speed plans (paper Table&nbsp;2).</b> Every released model stays far below real video at both speeds. Real video is below 1 because the depth reader compresses depth; it is the attainable reference.</figcaption>
+  </figure>
   <div class="tablewrap"><table>
     <thead><tr><th>Released model</th><th>&alpha; at 0.5×</th><th>&alpha; at 1.5×</th><th>lateral slope</th></tr></thead>
     <tbody>
@@ -107,7 +140,7 @@
   </table></div>
   <p class="note">Real video reads about .72 rather than 1 under speed plans because the depth reader compresses depth; it is the attainable reference. Lateral pairs are two seeds where available.</p>
 
-  <p style="margin-top:28px"><b>ReTime-Compose on the same frozen generators.</b> Lateral: slope against real stereo disparity (KITTI) or LiDAR parallax (nuScenes, Argoverse&nbsp;2), real = 1.00. Speed: gain in &alpha; over re-sampling, the training-free baseline that replays the logged-speed rollout at the planned speed.</p>
+  <p style="margin-top:28px"><b>ReTime-Compose on the same frozen generators</b> (paper Tables&nbsp;4 and 5). Lateral: slope against real stereo disparity (KITTI) or LiDAR parallax (nuScenes, Argoverse&nbsp;2), real = 1.00. Speed: gain in &alpha; over re-sampling, the training-free baseline that replays the logged-speed rollout at the planned speed.</p>
   <div class="tablewrap"><table>
     <thead><tr><th>Generator</th><th>lateral 0.54 m</th><th>speed gain at 0.5×</th><th>speed gain at 1.5×</th></tr></thead>
     <tbody>
@@ -122,7 +155,7 @@
   <h2>Method: ReTime-Compose</h2>
   <figure>
     <img src="static/images/rc_pipeline_pptx.png" alt="ReTime-Compose pipeline: roll out once, re-time by geometry, complete only the unseen.">
-    <figcaption><b>The plan acts through transport, and the frozen generator completes only what transport cannot supply.</b>
+    <figcaption><b>The plan acts through transport, and the frozen generator completes only what transport cannot supply</b> (paper Fig.&nbsp;3).
       (a) One frozen rollout at the logged speed. (b) Read depth and poses transport its frames from the rollout cameras to the planned ones. (c) The frozen model completes the pixels no frame covers; covered pixels are pasted back.</figcaption>
   </figure>
 
@@ -130,18 +163,18 @@
   <div class="grid">
     <figure>
       <img src="static/images/p_fig_alpha.png" alt="How the scene response alpha is read from LiDAR points.">
-      <figcaption><b>Scene response &alpha;.</b> The least-squares slope of the forecast change in distance against the real change (half against logged speed, KITTI). A forecast that changes as the world does lies on the dashed line.</figcaption>
+      <figcaption><b>Scene response &alpha;</b> (paper Fig.&nbsp;4). The least-squares slope of the forecast change in distance against the real change (half against logged speed, KITTI). A forecast that changes as the world does lies on the dashed line.</figcaption>
     </figure>
     <figure>
       <img src="static/images/p_fig5_frontier.png" alt="Response versus noise trade-off.">
-      <figcaption><b>Completion takes ReTime-Compose off the response&ndash;noise trade-off.</b> Re-sampling lowers the noise, the composite raises the response, and completion brings the noise below re-sampling's (validation set).</figcaption>
+      <figcaption><b>Completion takes ReTime-Compose off the response&ndash;noise trade-off</b> (paper Fig.&nbsp;7). Re-sampling lowers the noise, the composite raises the response, and completion brings the noise below re-sampling's (validation set).</figcaption>
     </figure>
   </div>
 
   <h2>Qualitative example</h2>
   <figure>
     <img src="static/images/p_fig6_qual.png" alt="Slow-down plan: real video, released model, re-sampling and ReTime-Compose.">
-    <figcaption><b>Under a slow-down plan, ReTime-Compose shows static content at the planned pose.</b> Real pose-matched video, the released model, re-sampling and ReTime-Compose at steps 16 and 24 of the 0.5&times; plan. Dashed line: the bottom of the real lead car.</figcaption>
+    <figcaption><b>Under a slow-down plan, ReTime-Compose shows static content at the planned pose</b> (paper Fig.&nbsp;6). Real pose-matched video, the released model, re-sampling and ReTime-Compose at steps 16 and 24 of the 0.5&times; plan. Dashed line: the bottom of the real lead car.</figcaption>
   </figure>
 
   <h2>Abstract</h2>
