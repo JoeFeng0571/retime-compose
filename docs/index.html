@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -83,14 +83,12 @@
   <h2 id="videos">Videos</h2>
   <p class="note">All numbers in the paper are computed over every context of each evaluation set. The videos illustrate them; where a context was selected for visibility, the caption says so.</p>
   <div class="tabs" role="tablist">
-    <button role="tab" aria-selected="true" data-v="speedup_orbis2">1.5× · Orbis 2</button>
-    <button role="tab" aria-selected="false" data-v="slowdown_orbis2">0.5× · Orbis 2</button>
-    <button role="tab" aria-selected="false" data-v="speedup_dw">1.5× · DrivingWorld</button>
-    <button role="tab" aria-selected="false" data-v="lateral">Lateral shift · Epona</button>
-    <button role="tab" aria-selected="false" data-v="depth_slowdown">Depth view · 0.5×</button>
+    <button role="tab" aria-selected="true" data-v="slow">Slow down 0.5×</button>
+    <button role="tab" aria-selected="false" data-v="fast">Speed up 1.5×</button>
+    <button role="tab" aria-selected="false" data-v="lateral">Shift 0.53 m right</button>
   </div>
   <figure>
-    <video id="vid" controls loop muted playsinline preload="metadata" src="static/videos/speedup_orbis2.mp4"></video>
+    <video id="vid" controls loop muted playsinline preload="metadata" src="static/videos/slow_down_sign.mp4"></video>
     <figcaption id="vcap"></figcaption>
   </figure>
 
@@ -164,11 +162,9 @@
 </main>
 <script>
   const V = {
-    speedup_orbis2: ["static/videos/speedup_orbis2.mp4", "<b>Speed-up plan (1.5×), Orbis&nbsp;2: at 1.5× the car is already past the intersection; the forecast is still at it.</b> Rows: real video at the logged speed and retimed to 1.5× (true outcome), released Orbis&nbsp;2, ReTime-Compose on the same frozen model. The video plays both plans side by side, then flips each row between 1× and 1.5× at step 24: the real view jumps, the released forecast barely moves. One context, <b>selected</b> as a clear failure (large real change, small model change); boxes are drawn by eye on the intersection."],
-    slowdown_orbis2: ["static/videos/slowdown_orbis2.mp4", "<b>Slow-down plan (0.5×), Orbis&nbsp;2: at half speed the intersection is still far ahead; the forecast is nearly as close as at 1×.</b> Same layout and context as the 1.5× video, <b>selected</b>."],
-    speedup_dw: ["static/videos/speedup_drivingworld.mp4", "<b>Speed-up plan (1.5×), DrivingWorld: at 1.5× the car is through the roundabout, facing a house; the forecast is still in front of the roundabout.</b> Rows: real video and released DrivingWorld (forecast seed as in the audit). One context, <b>selected</b> from the audit set as a clear failure (large real change in near-field depth, small model change); boxes are drawn by eye."],
-    lateral: ["static/videos/lateral_epona.mp4", "<b>Lateral plan: the logged path shifted 0.53&nbsp;m to the right (the stereo baseline).</b> Columns: real stereo pair (true outcome), released Epona, ReTime-Compose on the same frozen Epona; below each, a 2× zoom on the near parked cars. Each column flips between the two plans: against the fixed yellow lines the real cars jump left, Epona's do not move, ReTime-Compose's jump like the real ones. One context, <b>selected</b> for its near parked cars from the first six contexts of the lateral evaluation set."],
-    depth_slowdown: ["static/videos/depth_slowdown_orbis2.mp4", "<b>How the scene response is read (0.5×, Orbis&nbsp;2).</b> Camera image, depth from the frozen depth reader, and the near-field depth change between the plan and the logged speed: strong colour for real video (top), almost none for the forecast (bottom). Context <b>selected</b> as a clear failure."]
+    slow: ["static/videos/slow_down_sign.mp4", "<b>Slow-down plan (0.5×): at half speed the yellow sign should still be ahead; both released models put it right beside the car, as at full speed.</b> Rows: real outcome (the same recorded drive replayed at half speed, pose-matched frames), released DrivingWorld, released Orbis&nbsp;2, all from the same past frames. The video plays both plans side by side, then flips each row between 1× and 0.5× at step 12: the real view changes, the forecasts do not. One context, <b>selected</b> for visibility from the audit set; boxes are drawn by eye."],
+    fast: ["static/videos/speed_up_roundabout.mp4", "<b>Speed-up plan (1.5×): at 1.5× the real car is already through the roundabout, facing a house; both released models still forecast the view before the roundabout.</b> Same layout, flip at step 24. One context, <b>selected</b> for visibility from the audit set; boxes are drawn by eye."],
+    lateral: ["static/videos/lateral_epona.mp4", "<b>Lateral plan: drive 0.53&nbsp;m further right.</b> The real outcome is the second camera of the stereo rig, mounted 0.53&nbsp;m to the right. Columns: real, released Epona; below each, a zoom on the near parked car, with yellow lines at its edges on the logged path. When the plan flips, the real car jumps left out of its lines; Epona's does not jump left. One context, <b>selected</b> from the first six contexts of the lateral evaluation set."]
   };
   const vid = document.getElementById("vid"), cap = document.getElementById("vcap");
   function show(k) {
@@ -176,7 +172,7 @@
     document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", b.dataset.v === k ? "true" : "false"));
   }
   document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => { show(b.dataset.v); vid.play().catch(() => {}); }));
-  show("speedup_orbis2");
+  show("slow");
 </script>
 </body>
 </html>
