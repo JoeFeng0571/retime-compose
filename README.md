@@ -2,7 +2,7 @@
 
 **Yuqiao Feng\*, Xiaoyu Ao\*** · Chongqing University · \*Equal contribution
 
-[Project page](https://joefeng0571.github.io/retime-compose/) · Paper (arXiv, coming soon) · Code (coming soon)
+[Project page](https://joefeng0571.github.io/retime-compose/) · [Paper (arXiv)](https://arxiv.org/abs/2611.15260) · Code (coming soon)
 
 ![Teaser](docs/static/images/p_fig1_teaser.png)
 
@@ -13,7 +13,7 @@ Plan-conditioned driving world models are used to compare candidate plans, so th
 ## Release plan
 
 - [x] Project page
-- [ ] Paper (arXiv)
+- [x] Paper ([arXiv:2611.15260](https://arxiv.org/abs/2611.15260))
 - [ ] Scene-response (α) evaluation code and context lists
 - [ ] ReTime-Compose inference code
 
@@ -25,7 +25,7 @@ Datasets (KITTI, nuScenes, Argoverse 2) and released world-model checkpoints mus
 @article{retimecompose,
   title   = {Driving World Models Move the Camera, Not the Scene},
   author  = {Feng, Yuqiao and Ao, Xiaoyu},
-  journal = {arXiv preprint arXiv:XXXX.XXXXX},
+  journal = {arXiv preprint arXiv:2611.15260},
   year    = {2026}
 }
 ```
